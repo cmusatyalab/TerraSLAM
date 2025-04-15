@@ -1,7 +1,7 @@
 version: "3"
 services:
-  orb_slam3_22_humble:
-    image: orb-slam3-humble:22.04
+  TerraSLAM:
+    image: terraslam:latest
     volumes:
       #full dev
       - /dev:/dev:rw
@@ -15,6 +15,8 @@ services:
       - ./orb_slam3_ros2_wrapper/:/root/colcon_ws/src/orb_slam3_ros2_wrapper/
       - ./slam_msgs/:/root/colcon_ws/src/slam_msgs/
       # - ./ORB_SLAM3/:/home/orb/ORB_SLAM3/
+      # X11 forwarding
+      - ${XAUTHORITY}:/tmp/.Xauthority:ro
     privileged: true
     network_mode: host
     ipc: host
@@ -22,4 +24,8 @@ services:
     tty: true
     environment:
       - DISPLAY
+      - XAUTHORITY=/tmp/.Xauthority
     entrypoint: /bin/bash
+    ports:
+      - "11223:22"
+    container_name: TerraSLAM
