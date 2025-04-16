@@ -107,7 +107,7 @@ class StreamingExample(Node):
         self.get_logger().info("Attempting to land...")
         landing_command = self.drone(
             Landing()
-            & FlyingStateChanged(state="landed", _timeout=5)
+            >> FlyingStateChanged(state="landed", _timeout=10)
         )
         landing_result = landing_command.wait()
         if landing_result.success():
