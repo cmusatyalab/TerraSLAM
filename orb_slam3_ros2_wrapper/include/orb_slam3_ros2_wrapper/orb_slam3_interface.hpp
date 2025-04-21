@@ -98,6 +98,9 @@ namespace ORB_SLAM3_Wrapper
         
         bool trackMONO(const sensor_msgs::msg::Image::SharedPtr msgRGB, Sophus::SE3f &Tcw);
 
+        // Setup camera pose subscriber
+        void setupCameraPoseSubscriber(rclcpp::Node::SharedPtr node);
+
     private:
         std::shared_ptr<ORB_SLAM3::System> mSLAM_;
         std::shared_ptr<WrapperTypeConversions> typeConversions_;
@@ -122,6 +125,13 @@ namespace ORB_SLAM3_Wrapper
         std::string globalFrame_;
         std::string odomFrame_;
         std::string robotFrame_;
+
+        // Camera pose subscription
+        rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr cameraPoseSub_;
+        std::ofstream csvFile_;
+
+        // Camera pose callback
+        void cameraPoseCallback(const geometry_msgs::msg::Pose::SharedPtr msg);
     };
 }
 

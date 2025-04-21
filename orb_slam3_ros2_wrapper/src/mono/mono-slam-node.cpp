@@ -34,7 +34,7 @@ namespace ORB_SLAM3_Wrapper
         // tfListener_ = std::make_shared<tf2_ros::TransformListener>(*tfBuffer_);
 
         bool bUseViewer;
-        this->declare_parameter("visualization", rclcpp::ParameterValue(true));
+        this->declare_parameter("visualization", rclcpp::ParameterValue(false));
         this->get_parameter("visualization", bUseViewer);
 
         this->declare_parameter("ros_visualization", rclcpp::ParameterValue(false));

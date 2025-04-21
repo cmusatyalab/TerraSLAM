@@ -43,6 +43,11 @@ namespace ORB_SLAM3_Wrapper
         typeConversions_.reset();
         mapReferencePoses_.clear();
         allKFs_.clear();
+        
+        // Close CSV file
+        if (csvFile_.is_open()) {
+            csvFile_.close();
+        }
     }
 
     std::unordered_map<long unsigned int, ORB_SLAM3::KeyFrame *> ORBSLAM3Interface::makeKFIdPair(std::vector<ORB_SLAM3::Map *> mapsList)
@@ -562,5 +567,31 @@ namespace ORB_SLAM3_Wrapper
     {
         return mSLAM_->isShutDown();
     }
-    
+
+    void ORBSLAM3Interface::setupCameraPoseSubscriber(rclcpp::Node::SharedPtr node)
+    {
+        cameraPoseSub_ = node->create_subscription<geometry_msgs::msg::Pose>(
+            "camera_pose", 10, std::bind(&ORBSLAM3Interface::cameraPoseCallback, this, std::placeholders::_1));
+        
+        // Create CSV file
+        csvFile_.open("camera_pose.csv");
+        csvFile_ << "timestamp,x,y,z\n";
+    }
+
+    void ORBSLAM3Interface::cameraPoseCallback(const geometry_msgs::msg::Pose::SharedPtr msg)
+    {
+        // Get current timestamp
+        auto now = std::chrono::system_clock::now();
+        auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+        auto epoch = now_ms.time_since_epoch();
+        auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
+        long timestamp = value.count();
+
+        // Write to CSV file
+        csvFile_ << timestamp << ","
+                << msg->position.x << ","
+                << msg->position.y << ","
+                << msg->position.z << "\n";
+        csvFile_.flush();
+    }
 }

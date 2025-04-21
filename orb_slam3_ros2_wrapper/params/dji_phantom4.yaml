@@ -20,6 +20,7 @@
 # System.LoadAtlasFromFile: "Map/Map-Mill-19-Side"
 # System.LoadAtlasFromFile: "Map/Map-Mill-19-Top"
 # System.LoadAtlasFromFile: "Map/Map-temp"
+System.LoadAtlasFromFile: "Map/Demo-Mill-19" 
 
 
 
