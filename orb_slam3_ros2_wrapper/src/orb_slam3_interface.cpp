@@ -512,7 +512,7 @@ namespace ORB_SLAM3_Wrapper
         }
     }
     
-    bool ORBSLAM3Interface::trackMONO(const sensor_msgs::msg::Image::SharedPtr msgRGB, Sophus::SE3f &Tcw)
+    int ORBSLAM3Interface::trackMONO(const sensor_msgs::msg::Image::SharedPtr msgRGB, Sophus::SE3f &Tcw)
     {
         orbAtlas_ = mSLAM_->GetAtlas();
         cv_bridge::CvImageConstPtr cvRGB;
@@ -524,7 +524,7 @@ namespace ORB_SLAM3_Wrapper
         catch (cv_bridge::Exception &e)
         {
             std::cerr << "cv_bridge exception RGB!" << endl;
-            return false;
+            return 0; // No images yet
         }
 
         // track the frame.
@@ -536,14 +536,14 @@ namespace ORB_SLAM3_Wrapper
         {
             // do not publish any values during map merging. This is because the reference poses change.
             std::cout << "Waiting for merge to finish." << endl;
-            return false;
+            return 0; // Return as "No images yet" since we can't track during merge
         }
-        if (currentTrackingState == 2)
+        
+        if (currentTrackingState == 2) // OK
         {
             calculateReferencePoses();
             correctTrackedPose(Tcw);
             hasTracked_ = true;
-            return true;
         }
         else
         {
@@ -559,8 +559,10 @@ namespace ORB_SLAM3_Wrapper
                 std::cerr << "ORB-SLAM failed: Tracking LOST." << endl;
                 break;
             }
-            return false;
+            // return false;
         }
+
+        return currentTrackingState;
     }
 
     bool ORBSLAM3Interface::checkSLAMShutdown()

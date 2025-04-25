@@ -96,7 +96,7 @@ namespace ORB_SLAM3_Wrapper
 
         bool trackRGBD(const sensor_msgs::msg::Image::SharedPtr msgRGB, const sensor_msgs::msg::Image::SharedPtr msgD, Sophus::SE3f &Tcw);
         
-        bool trackMONO(const sensor_msgs::msg::Image::SharedPtr msgRGB, Sophus::SE3f &Tcw);
+        int trackMONO(const sensor_msgs::msg::Image::SharedPtr msgRGB, Sophus::SE3f &Tcw);
 
         // Setup camera pose subscriber
         void setupCameraPoseSubscriber(rclcpp::Node::SharedPtr node);

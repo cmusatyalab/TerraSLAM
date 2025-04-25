@@ -112,20 +112,56 @@ namespace ORB_SLAM3_Wrapper
     void MonoSlamNode::MONOCallback(const sensor_msgs::msg::Image::SharedPtr msgRGB)
     {
         Sophus::SE3f Tcw;
-        if (interface_->trackMONO(msgRGB, Tcw))
+        int trackingState = interface_->trackMONO(msgRGB, Tcw);
+        
+        // Create pose message
+        auto camPose = typeConversion_.se3ToPoseMsg(Tcw);
+        
+        // Handle different tracking states
+        if (trackingState == 2) // OK
         {
             isTracked_ = true;
-            // if(no_odometry_mode_) interface_->getDirectMapToRobotTF(msgRGB->header, tfMapOdom_);
-            // tfBroadcaster_->sendTransform(tfMapOdom_);
-            ++frequency_tracker_count_;
-
-            // publish camera's pose
-            auto camPose = typeConversion_.se3ToPoseMsg(Tcw);
+            // publish camera's pose as normal
             cameraPosePub_->publish(camPose);
-            // this->publishCurrentMapPointCloud();
-
-            // publishMapPointCloud();
-            // std::thread(&MonoSlamNode::publishMapPointCloud, this).detach();
+        }
+        else if (trackingState == 1) // Not initialized
+        {
+            // Create a pose with all -1 values
+            geometry_msgs::msg::Pose notInitializedPose;
+            notInitializedPose.position.x = -1.0;
+            notInitializedPose.position.y = -1.0;
+            notInitializedPose.position.z = -1.0;
+            notInitializedPose.orientation.x = -1.0;
+            notInitializedPose.orientation.y = -1.0;
+            notInitializedPose.orientation.z = -1.0;
+            notInitializedPose.orientation.w = -1.0;
+            cameraPosePub_->publish(notInitializedPose);
+        }
+        else if (trackingState == 3) // Tracking lost
+        {
+            // Create a pose with all -3 values
+            geometry_msgs::msg::Pose trackingLostPose;
+            trackingLostPose.position.x = -3.0;
+            trackingLostPose.position.y = -3.0;
+            trackingLostPose.position.z = -3.0;
+            trackingLostPose.orientation.x = -3.0;
+            trackingLostPose.orientation.y = -3.0;
+            trackingLostPose.orientation.z = -3.0;
+            trackingLostPose.orientation.w = -3.0;
+            cameraPosePub_->publish(trackingLostPose);
+        }
+        else // No images yet or merge detected
+        {
+            // Create a pose with all 0 values
+            geometry_msgs::msg::Pose noImagesPose;
+            noImagesPose.position.x = 0.0;
+            noImagesPose.position.y = 0.0;
+            noImagesPose.position.z = 0.0;
+            noImagesPose.orientation.x = 0.0;
+            noImagesPose.orientation.y = 0.0;
+            noImagesPose.orientation.z = 0.0;
+            noImagesPose.orientation.w = 0.0;
+            cameraPosePub_->publish(noImagesPose);
         }
     }
     //复刻
