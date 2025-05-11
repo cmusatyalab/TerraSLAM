@@ -30,11 +30,12 @@ def enu_to_lla(E, N, U, lon0, lat0, alt0):
 
 
 class ImageClient:
-    def __init__(self, server_ip='localhost', server_port=43322, transform_json='transform.json'):
+    def __init__(self, server_ip, server_port, transform_json):
         self.server_ip = server_ip
         self.server_port = server_port
         self.client_socket = None
         self.slam2gps = SLAM2GPS(transform_json)
+        self.latest_pose = None  # Store the latest pose data
 
     def connect(self):
         try:
@@ -64,12 +65,12 @@ class ImageClient:
 
             # Send image data
             self.client_socket.sendall(img_bytes)
-            # print(f"Sent image: {image_path}")
 
             # Receive pose data (3 doubles = 24 bytes)
             pose_data = self.client_socket.recv(24)
             if len(pose_data) == 24:
                 x, y, z = struct.unpack('3d', pose_data)
+                self.latest_pose = (x, y, z)  # Store the latest pose
                 # Check if all values are 0 (initializing status)
                 if abs(x) < 1e-10 and abs(y) < 1e-10 and abs(z) < 1e-10:
                     print("System status: Initializing")
@@ -96,7 +97,8 @@ def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Send images to server and receive poses')
     parser.add_argument('image_folder', help='Path to the folder containing images')
-    parser.add_argument('--server', '-s', default='localhost', help='Server IP address (default: localhost)')
+    parser.add_argument('--server', '-s', default='128.2.208.19', help='Server IP address (default: 128.2.208.19)')
+    parser.add_argument('--port', '-p', default=43322, help='Server port (default: 43322)')
     parser.add_argument('--transform', '-t', default='transform.json', help='Path to transform.json file (default: transform.json)')
     args = parser.parse_args()
 
@@ -111,7 +113,7 @@ def main():
         return
 
     # Create client
-    client = ImageClient(server_ip=args.server, transform_json=args.transform)
+    client = ImageClient(server_ip=args.server, server_port=int(args.port), transform_json=args.transform)
     
     # Connect to server
     if not client.connect():
@@ -130,7 +132,7 @@ def main():
         for image_path in image_files:
             if not client.send_image(image_path):
                 break
-            time.sleep(0.1)  # Small delay between images
+            time.sleep(0.03)  # Small delay between images
 
     except KeyboardInterrupt:
         print("\nInterrupted by user")
