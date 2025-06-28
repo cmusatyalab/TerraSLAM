@@ -116,4 +116,4 @@ This component provides the integration module for aligning SLAM results with GI
 The SLAM-GIS-GPS Alignment module handles the transformation of SLAM localization results from local, relative coordinates to global, geospatial coordinates compatible with GPS systems.
 
 ### 3.2 Usage
-Please refer to the respective documentation for detailed setup and usage instructions for the GPS alignment functionality.
+Please refer to the respective documentation in `container_root/SLAM-GPS-align/` for detailed setup and usage instructions for the GPS alignment functionality.
