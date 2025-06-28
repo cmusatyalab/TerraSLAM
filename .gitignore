@@ -24,6 +24,8 @@ container_root/olympe_dev/olympe_streaming_test_*
 container_root/olympe_dev/olympe_streaming*
 container_root/.python_history
 container_root/.gnupg/
+container_root/TerraSLAM_relay/transform_*.json
+docker-compose.yml~
 
 **.vscode**
 showgit.py
