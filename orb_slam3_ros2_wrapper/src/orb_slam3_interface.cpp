@@ -570,6 +570,23 @@ namespace ORB_SLAM3_Wrapper
         return mSLAM_->isShutDown();
     }
 
+    void ORBSLAM3Interface::triggerGlobalBundleAdjustment()
+    {
+        if (mSLAM_ && orbAtlas_) {
+            std::cout << "Triggering global bundle adjustment..." << std::endl;
+            ORB_SLAM3::Map* pActiveMap = orbAtlas_->GetCurrentMap();
+            if (pActiveMap) {
+                // Use 0 as the loop keyframe ID, or get the current keyframe ID if needed
+                mSLAM_->GetLoopClosing()->RunGlobalBundleAdjustment(pActiveMap, 0);
+                std::cout << "Global bundle adjustment completed" << std::endl;
+            } else {
+                std::cerr << "Cannot trigger global BA: No active map" << std::endl;
+            }
+        } else {
+            std::cerr << "Cannot trigger global BA: SLAM system not initialized" << std::endl;
+        }
+    }
+
     void ORBSLAM3Interface::setupCameraPoseSubscriber(rclcpp::Node::SharedPtr node)
     {
         cameraPoseSub_ = node->create_subscription<geometry_msgs::msg::Pose>(

@@ -57,7 +57,7 @@ class ImageRelay(Node):
         self.get_logger().info('TCP server started on port 43322')
         
         # Initialize GPS conversion
-        self.transform_json = "tranform.json"  # Update this path to your transform json file
+        self.transform_json = "tranform_0602_merge.json"  # Update this path to your transform json file
         try:
             self.slam2gps = SLAM2GPS(self.transform_json)
             self.base_transform_matrix = read_transform_matrix("slam_transform_matrix.txt")

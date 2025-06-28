@@ -17,7 +17,13 @@
 # System.LoadAtlasFromFile: "Map/Map-CMU-0813-1330" 
 # System.LoadAtlasFromFile: "Map/Map-CMU-0814-1330" 
 # System.LoadAtlasFromFile: "Map/Map-Mill-19" 
-System.LoadAtlasFromFile: "Map/Demo-Mill-19-Anafi-0508" 
+# System.LoadAtlasFromFile: "Map/Demo-Mill-19-Anafi-0508" 
+# System.LoadAtlasFromFile: "Map/Demo-Mill-19-Anafi-0515-update" 
+# System.LoadAtlasFromFile: "Map/Demo-Mill-19-Anafi-0520-update" 
+# System.LoadAtlasFromFile: "Map/Demo-Mill-19-Anafi-0520-merge" 
+# System.LoadAtlasFromFile: "Map/Demo-Mill-19-Anafi-0520-merge-full" 
+# System.LoadAtlasFromFile: "Map/Demo-Mill-19-Anafi-0602-merge-full" 
+System.LoadAtlasFromFile: "Map/Map-Mill-19-2024" 
 
 # The store file is created from the current session, if a file with the same name exists it is deleted
 # System.SaveAtlasToFile: "Map/Map-CMU-0807-1310"

@@ -87,6 +87,9 @@ namespace ORB_SLAM3_Wrapper
         // Check whether SLAM system is shutdown
         bool checkSLAMShutdown();
 
+        // Trigger a global bundle adjustment
+        void triggerGlobalBundleAdjustment();
+
         // Publish All MapPoints
         // void getAllMapPoints(sensor_msgs::msg::PointCloud2 &mapPointCloud);
 
