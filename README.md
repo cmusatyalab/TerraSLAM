@@ -160,11 +160,11 @@ You will see the printed GPS coordinates in the terminal logs of the former ``re
 On your local machine (no need to enter a new TerraSLAM container),
 ```
 cd container_root/TerraSLAM_relay
-python3 relay_client.py ../Database/Mill-video -s 127.0.0.1 -p 43322
+python3 gui_client.py ../Database/Mill-video -s 127.0.0.1 -p 43322 --google-api-key @your_google_api
 ```
 This will send the images to the ORB-SLAM3 wrapper for SLAM processing. 
 At the same time, a GUI will launch to display the current GPS coordinates and plot the results on a map. 
-If you provide a Google API key, the results will be shown on Google Map.
+By default, the results will be displayed on OpenStreetMap. However, if you provide a Google API key, the results will be shown on Google Map.
 
 ### 3D Localization Results Visualization in Blender
 1. Download [Blender version 2.93](https://www.blender.org/download/lts/2-93/). In our tests, Blender versions above 3.1 also work, but we found that Blender 2.93 is a more stable and compatible version across different platforms.
