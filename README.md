@@ -168,11 +168,26 @@ By default, the results will be displayed on OpenStreetMap. However, if you prov
 
 ### 3D Localization Results Visualization in Blender
 1. Download [Blender version 2.93](https://www.blender.org/download/lts/2-93/). In our tests, Blender versions above 3.1 also work, but we found that Blender 2.93 is a more stable and compatible version across different platforms.
-2. Download the [Blender Project File](https://storage.cmusatyalab.org/mega-nerf-data/building-pixsfm.tgz). Make sure that the ``Mill-19.blend`` and the model texture folder ``mill-19-half-q0to84q`` are in the same directory.
+2. Download the [Blender Project File](https://storage.cmusatyalab.org/terra-slam/mill-blender.tgz).
+    ```
+    wget https://storage.cmusatyalab.org/terra-slam/mill-blender.tgz
+    ```
+
+    Make sure that the ``Mill-19.blend`` and the model texture folder ``mill-19-half-q0to84q`` are in the same directory and follow the file structure:
+    ```
+    mill-blender/
+    ├── Mill-19.blend/           # Open it in Blender
+    ├── mill-19-half-q0to84q     # 3D GIS Models about Mill-19
+    ├──── *.bin, *.png, ...      # GIS Modesl metadata 
+    ```
+
 This project contains the 3D GIS model of the Mill-19 area, the SLAM point cloud, the alignment between SLAM and GIS models, a drone model, and the Blender scripts interacted with TerraSLAM. 
 Import ``Mill-19.blend`` in Blender.
 3. In Blender's menu bar, switch to the ``scripting`` workspace. 
 In the editor panel, select and run `drone_pose.py`. This will start a Blender server (at ``127.0.0.1:11223``) that receives the drone pose calculated by TerraSLAM from the client and renders the result in the 3D GIS model. After running the script, you can return to the default ``layout`` workspace.
+![Blender 3D Visualization Example](blender.png)
+
+
 4. Run TerraSLAM as the above and send pose data to blender:
     - In the previous terminals inside the TerraSLAM, run:
       ```
