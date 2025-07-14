@@ -115,7 +115,7 @@ Here we use the above demo as an example to show how to run TerraSLAM.
     wget https://storage.cmusatyalab.org/terra-slam/Map-Mill-19-2024.osa
     ```
   Please refer to the ``ORB_SLAM3`` submodule's README for instructions on how to save, import, and merge maps created by SLAM.
-* **SLAM-GPS Transformation Matrix**: in the TerraSLAM container, download the Mill-19 transformation matrix, [transform.json](https://storage.cmusatyalab.org/mega-nerf-data/building-pixsfm.json) into the ``TerraSLAM_relay`` folder.
+* **SLAM-GPS Transformation Matrix**: in the TerraSLAM container, download the Mill-19 transformation matrix, [transform.json](https://storage.cmusatyalab.org/terra-slam/transform.json) into the ``TerraSLAM_relay`` folder.
     ```
     cd /root/TerraSLAM_relay
     wget https://storage.cmusatyalab.org/terra-slam/transform.json
