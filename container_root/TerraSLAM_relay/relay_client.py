@@ -97,7 +97,7 @@ def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Send images to server and receive poses')
     parser.add_argument('image_folder', help='Path to the folder containing images')
-    parser.add_argument('--server', '-s', default='128.2.208.19', help='Server IP address (default: 128.2.208.19)')
+    parser.add_argument('--server', '-s', default='127.0.0.1', help='Server IP address (default: localhost)')
     parser.add_argument('--port', '-p', default=43322, help='Server port (default: 43322)')
     parser.add_argument('--transform', '-t', default='transform.json', help='Path to transform.json file (default: transform.json)')
     args = parser.parse_args()
