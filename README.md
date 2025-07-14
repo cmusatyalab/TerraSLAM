@@ -125,6 +125,7 @@ Here we use the above demo as an example to show how to run TerraSLAM.
 ### Launch ORB-SLAM3
 Inside the TerraSLAM container:
 ```
+cd ~
 ros2 launch orb_slam3_ros2_wrapper unirobot_mono.launch.py
 ```
 This command is used for running the demo with a monocular camera.
