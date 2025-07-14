@@ -108,18 +108,18 @@ Here we use the above demo as an example to show how to run TerraSLAM.
   cp TerraSLAM_runtime/image_publish.py Database/image_publish.py
   ``` 
 
-* **Pre-built SLAM Map**: in the TerraSLAM container, download the SLAM map, [mill-19.osa](https://storage.cmusatyalab.org/mega-nerf-data/building-pixsfm.tgz) into the ``Map`` folder.
+* **Pre-built SLAM Map**: in the TerraSLAM container, download the SLAM map, [Mill-19-Map](https://storage.cmusatyalab.org/terra-slam/Map-Mill-19-2024.osa) into the ``Map`` folder.
     ```
     cd &&  mkdir -p Map
     cd Map
-    
+    wget https://storage.cmusatyalab.org/terra-slam/Map-Mill-19-2024.osa
     ```
-Please refer to the ``ORB_SLAM3`` submodule's README for instructions on how to save, import, and merge maps created by SLAM.
-* **SLAM-GPS Transformation Matrix**: in the TerraSLAM container, 
+  Please refer to the ``ORB_SLAM3`` submodule's README for instructions on how to save, import, and merge maps created by SLAM.
+* **SLAM-GPS Transformation Matrix**: in the TerraSLAM container, download the Mill-19 transformation matrix, [transform.json](https://storage.cmusatyalab.org/mega-nerf-data/building-pixsfm.json) into the ``TerraSLAM_relay`` folder.
     ```
     cd /root/TerraSLAM_relay
+    wget https://storage.cmusatyalab.org/terra-slam/transform.json
     ```
-    and download the Mill-19 transformation matrix, [transform.json](https://storage.cmusatyalab.org/mega-nerf-data/building-pixsfm.json) into the ``TerraSLAM_relay`` folder.
     Similarly, if you want to learn more about how to compute the transformation matrix between SLAM and GPS, please refer to the code and README in the ``SLAM-GPS-align`` subfolder.
 
 ### Launch ORB-SLAM3
@@ -149,7 +149,7 @@ python3 relay.py
 In another terminal, start a new TerraSLAM container processes and run
 ```
 cd Database
-python3 image_publish.py Mill-video
+python3 image_publish.py Mill-video/
 ``` 
 You will see the printed GPS coordinates in the terminal logs of the former ``relay.py``
 
