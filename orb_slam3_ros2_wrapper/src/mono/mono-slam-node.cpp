@@ -108,7 +108,7 @@ namespace ORB_SLAM3_Wrapper
         }
         else RCLCPP_WARN(this->get_logger(), "Odometry msg recorded but no odometry mode is true, set to false to use this odometry");
     }
-    //复刻
+    // Replication
     void MonoSlamNode::MONOCallback(const sensor_msgs::msg::Image::SharedPtr msgRGB)
     {
         Sophus::SE3f Tcw;
@@ -164,7 +164,7 @@ namespace ORB_SLAM3_Wrapper
             cameraPosePub_->publish(noImagesPose);
         }
     }
-    //复刻
+    // Replication
     void MonoSlamNode::publishCurrentMapPointCloud()
     {
         if (isTracked_)

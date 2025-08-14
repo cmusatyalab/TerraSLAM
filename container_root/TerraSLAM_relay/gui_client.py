@@ -159,8 +159,8 @@ class SLAMViewer(tk.Tk):
             self.path.delete()
         if len(self.trajectory_points) >= 2:
             self.path = self.map_widget.set_path(self.trajectory_points, 
-                                               color="blue",  # 轨迹颜色
-                                               width=2,       # 轨迹宽度
+                                               color="blue",  # Trajectory color
+                                               width=2,       # Trajectory width
                                                )
         
         # Only set initial position and zoom once

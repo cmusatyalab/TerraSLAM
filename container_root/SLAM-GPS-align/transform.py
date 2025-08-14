@@ -2,10 +2,10 @@
 """
 slam_to_gps_icp.py  ―  SLAM XYZ ↔ GPS LLA  (Umeyama + multi‑round numpy ICP)
 ------------------------------------------------------------------------
-新增：打印  ▸ Umeyama 初始 RMSE
-          ▸ ICP 每轮 RMSE
-          ▸ ICP 最终 RMSE
-支持：原始 ECEF 实现和 pymap3d 实现（默认使用 pymap3d）
+New features: Print  ▸ Initial Umeyama RMSE
+                    ▸ ICP RMSE per round
+                    ▸ Final ICP RMSE
+Support: Original ECEF implementation and pymap3d implementation (default uses pymap3d)
 """
 import json, argparse
 from pathlib import Path
@@ -13,9 +13,9 @@ import numpy as np
 import pandas as pd
 from math import sin, cos, radians
 from pyproj import Transformer            # 4979↔4978
-from pymap3d import geodetic2enu, enu2geodetic  # 新增: pymap3d 支持
+from pymap3d import geodetic2enu, enu2geodetic  # New: pymap3d support
 
-# ---------- 原始实现（基于 ECEF） ---------- #
+# ---------- Original implementation (based on ECEF) ---------- #
 # _lla2ecef = Transformer.from_crs("epsg:4979", "epsg:4978", always_xy=True)
 # _ecef2lla = Transformer.from_crs("epsg:4978", "epsg:4979", always_xy=True)
 
@@ -44,7 +44,7 @@ from pymap3d import geodetic2enu, enu2geodetic  # 新增: pymap3d 支持
 #     x0, y0, z0 = lla_to_ecef(lon0, lat0, alt0)
 #     return ecef_to_lla(x0+dx, y0+dy, z0+dz)
 
-# ---------- 新实现（基于 pymap3d） ---------- #
+# ---------- New implementation (based on pymap3d) ---------- #
 def lla_to_enu(lon, lat, alt, lon0, lat0, alt0):
     e, n, u = geodetic2enu(lat, lon, alt, lat0, lon0, alt0)
     return np.c_[e, n, u]
@@ -99,11 +99,11 @@ def icp_sim3(src, dst, s0, R0, t0, max_iter=30, eps=1e-6):
         prev_err = rmse
     return s,R,t, rmse
 
-# ---------- 辅助 ---------- #
+# ---------- Utilities ---------- #
 def resample(k, n): return np.linspace(0,n-1,k).round().astype(int)
 def rmse(a,b): return np.sqrt(((a-b)**2).sum(1).mean())
 
-# ---------- 主流程 ---------- #
+# ---------- Main pipeline ---------- #
 def calibrate(slam_csv, gps_csv, use_icp=True, out_json="transform.json"):
     slam = pd.read_csv(slam_csv)[["x","y","z"]].to_numpy()
     gps  = pd.read_csv(gps_csv)[["latitude","longitude","height"]]
@@ -132,7 +132,7 @@ def calibrate(slam_csv, gps_csv, use_icp=True, out_json="transform.json"):
     print(f"[OK] transform saved → {out_json}")
     return json_data
 
-# ---------- 在线 ---------- #
+# ---------- Online ---------- #
 class SLAM2GPS:
     def __init__(self,jpath):
         cfg=json.loads(Path(jpath).read_text())
