@@ -5,36 +5,13 @@ import os
 import time
 import glob
 import argparse
-import json
-from pathlib import Path
-import numpy as np
-from pymap3d import enu2geodetic
-
-# ------ Transform SLAM coordinates to LLA ------
-class SLAM2GPS:
-    def __init__(self,jpath):
-        cfg=json.loads(Path(jpath).read_text())
-        self.s,cfg_r,cfg_t = cfg["scale"], np.array(cfg["rotation"]), np.array(cfg["translation"])
-        self.R,self.t = cfg_r, cfg_t.reshape(3,1)
-        self.lat0,self.lon0,self.alt0 = cfg["lat0"],cfg["lon0"],cfg["alt0"]
-    def slam_to_lla(self,xyz):
-        xyz=np.asarray(xyz).reshape(3,-1)
-        enu=(self.s*self.R@xyz+self.t).T
-        return enu_to_lla(enu[:,0],enu[:,1],enu[:,2],
-                          self.lon0,self.lat0,self.alt0)
-
-def enu_to_lla(E, N, U, lon0, lat0, alt0):
-    lat, lon, alt = enu2geodetic(E, N, U, lat0, lon0, alt0)
-    return np.c_[lat, lon, alt]
-# ------End of Transform SLAM coordinates to LLA -----------
-
 
 class ImageClient:
-    def __init__(self, server_ip, server_port, transform_json):
+    def __init__(self, server_ip, server_port=43322):
         self.server_ip = server_ip
         self.server_port = server_port
         self.client_socket = None
-        self.slam2gps = SLAM2GPS(transform_json)
+        # Server now handles GPS conversion and sends GPS coordinates directly
         self.latest_pose = None  # Store the latest pose data
 
     def connect(self):
@@ -67,17 +44,22 @@ class ImageClient:
             self.client_socket.sendall(img_bytes)
 
             # Receive pose data (3 doubles = 24 bytes)
+            # Server now sends GPS coordinates directly: (lat, lon, alt) or status values
             pose_data = self.client_socket.recv(24)
             if len(pose_data) == 24:
-                x, y, z = struct.unpack('3d', pose_data)
-                self.latest_pose = (x, y, z)  # Store the latest pose
-                # Check if all values are 0 (initializing status)
-                if abs(x) < 1e-10 and abs(y) < 1e-10 and abs(z) < 1e-10:
-                    print("System status: Initializing")
+                lat, lon, alt = struct.unpack('3d', pose_data)
+                self.latest_pose = (lat, lon, alt)  # Store the latest GPS coordinates
+                
+                # Check for special status values as defined in relay.py
+                if lat == -3.0 and lon == -3.0 and alt == -3.0:
+                    print("System status: Tracking lost")
+                elif lat == -1.0 and lon == -1.0 and alt == -1.0:
+                    print("System status: Not initialized")
+                elif lat == 0.0 and lon == 0.0 and alt == 0.0:
+                    print("System status: Initializing / No images yet")
                 else:
-                    # Transform SLAM coordinates to LLA
-                    lat, lon, alt = self.slam2gps.slam_to_lla([x, y, z])[0]
-                    print(f"{lat},{lon},{alt}")
+                    # Valid GPS coordinates received directly from server
+                    print(f"GPS: {lat:.8f}, {lon:.8f}, {alt:.3f}m")
             else:
                 print("Failed to receive complete pose data")
                 return False
@@ -99,7 +81,6 @@ def main():
     parser.add_argument('image_folder', help='Path to the folder containing images')
     parser.add_argument('--server', '-s', default='128.2.208.19', help='Server IP address (default: 128.2.208.19)')
     parser.add_argument('--port', '-p', default=43322, help='Server port (default: 43322)')
-    parser.add_argument('--transform', '-t', default='transform.json', help='Path to transform.json file (default: transform.json)')
     args = parser.parse_args()
 
     # Check if folder exists
@@ -107,13 +88,8 @@ def main():
         print(f"Folder not found: {args.image_folder}")
         return
 
-    # Check if transform file exists
-    if not os.path.exists(args.transform):
-        print(f"Transform file not found: {args.transform}")
-        return
-
     # Create client
-    client = ImageClient(server_ip=args.server, server_port=int(args.port), transform_json=args.transform)
+    client = ImageClient(server_ip=args.server, server_port=int(args.port))
     
     # Connect to server
     if not client.connect():

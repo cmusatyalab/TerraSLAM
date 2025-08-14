@@ -115,7 +115,7 @@ namespace ORB_SLAM3_Wrapper
         // std::cout << "+++++++++++++++++++++++++++++++++" << std::endl;
         mapReferencesMutex_.unlock();
     }
-    //确认
+    // Confirmed
 
     // All Mappoints
     void ORBSLAM3Interface::getCurrentMapPoints(sensor_msgs::msg::PointCloud2 &mapPointCloud)
